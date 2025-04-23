@@ -1,5 +1,5 @@
-import axios from 'axios'
 import { Router, Request, Response } from 'express'
+import axiosInstance from '../services/axios/axiosInstance'
 
 const router = Router()
 
@@ -13,12 +13,12 @@ router.post('/', async (req: MoodRequest, res: Response): Promise<void> => {
   const { text } = req.body
 
   if (!text || typeof text !== 'string') {
-    res.status(400).json({ error: 'Please provide a valid text.' })
+    res.status(400).json({ error: 'Please send a valid text.' })
     return
   }
 
   try {
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       'https://api-inference.huggingface.co/models/bhadresh-savani/distilbert-base-uncased-emotion',
       { inputs: text }
     )
