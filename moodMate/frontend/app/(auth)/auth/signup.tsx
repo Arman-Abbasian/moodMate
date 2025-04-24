@@ -1,62 +1,81 @@
-import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import RHFInput from '@/ui/RHFInput'
+import ActionButton from '@/ui/ActionButton'
 
-interface FormData {
-  firstName: string
-  email: string
-  password: string
-}
+export const signupSchema = z.object({
+  firstName: z
+    .string({ required_error: 'First name is required' })
+    .min(2, { message: 'First name must be at least 2 characters' }),
+
+  email: z
+    .string({ required_error: 'Email is required' })
+    .email({ message: 'Please enter a valid email address' }),
+
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters long' })
+    .regex(/[a-z]/, {
+      message: 'Password must contain at least one lowercase letter',
+    })
+    .regex(/[A-Z]/, {
+      message: 'Password must contain at least one uppercase letter',
+    })
+    .regex(/[0-9]/, { message: 'Password must contain at least one number' }),
+})
+
+export type SignupFormData = z.infer<typeof signupSchema>
+
 export default function Signup() {
   const router = useRouter()
-  const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    email: '',
-    password: '',
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
   })
 
-  const changeFormDataHandler = (e: string, name: string) => {
-    setFormData({ ...formData, [name]: e })
-  }
-  const handleSignup = () => {
-    console.log(formData)
-    setFormData({
-      firstName: '',
-      email: '',
-      password: '',
-    })
+  const onSubmit = (data: SignupFormData) => {
+    reset()
     router.replace('/')
   }
 
   return (
-    <View className="flex-1 justify-center items-center bg-primary px-6">
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>sign up</Text>
-      <TextInput
+    <View className="flex-1 justify-center items-center bg-primary px-6 gap-4">
+      <Text className="text-white text-center font-bold text-2xl">sign up</Text>
+
+      {/* First Name */}
+      <RHFInput
+        control={control}
+        name="firstName"
         placeholder="first name"
-        value={formData.firstName}
-        className="w-full rounded-xl px-3 py-4 mb-6 bg-white"
-        onChangeText={(e: string) => changeFormDataHandler(e, 'firstName')}
+        errors={errors}
       />
-      <TextInput
+      {/* Email */}
+      <RHFInput
+        control={control}
+        name="email"
         placeholder="email"
-        value={formData.email}
-        className="w-full rounded-xl px-3 py-4 mb-6 bg-white"
-        onChangeText={(e: string) => changeFormDataHandler(e, 'email')}
-      />
-      <TextInput
-        placeholder="password"
-        value={formData.password}
-        className="w-full rounded-xl px-3 py-4 mb-6 bg-white"
-        onChangeText={(e: string) => changeFormDataHandler(e, 'password')}
-        secureTextEntry
+        errors={errors}
       />
 
-      <TouchableOpacity
-        className="bg-secondary rounded-xl py-3 w-full mb-3"
-        onPress={handleSignup}
-      >
-        <Text className="text-white text-center font-bold">sign up</Text>
-      </TouchableOpacity>
+      {/* Password */}
+      <RHFInput
+        control={control}
+        name="password"
+        placeholder="password"
+        errors={errors}
+      />
+
+      {/* Submit */}
+      <ActionButton onPress={handleSubmit(onSubmit)} text="sign up" />
+
       <Text onPress={() => router.push('/auth/login' as never)}>
         have an account? login
       </Text>
