@@ -3,7 +3,7 @@ import cors from 'cors'
 import moodRoutes from './routes/mood'
 import path from 'path'
 import dotenv from 'dotenv'
-
+import authRoutes from './routes/auth'
 dotenv.config()
 
 const app = express()
@@ -12,6 +12,7 @@ const port = 5000
 app.use(cors())
 app.use(express.json())
 app.use('/static', express.static(path.join(__dirname, '..', 'public')))
+app.use('/api/auth', authRoutes)
 app.use('/api/mood', moodRoutes)
 app.use((req, res) => {
   res.status(404).json({ error: 'مسیر مورد نظر یافت نشد' })

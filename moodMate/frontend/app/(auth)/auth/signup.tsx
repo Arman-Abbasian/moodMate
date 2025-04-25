@@ -9,7 +9,8 @@ import ActionButton from '@/ui/ActionButton'
 export const signupSchema = z.object({
   firstName: z
     .string({ required_error: 'First name is required' })
-    .min(2, { message: 'First name must be at least 2 characters' }),
+    .min(2, { message: 'First name must be at least 2 characters' })
+    .max(30, { message: 'First name must be less than 30 characters' }),
 
   email: z
     .string({ required_error: 'Email is required' })
@@ -18,6 +19,7 @@ export const signupSchema = z.object({
   password: z
     .string({ required_error: 'Password is required' })
     .min(6, { message: 'Password must be at least 6 characters long' })
+    .max(30, { message: 'Password must be less than 30 characters' })
     .regex(/[a-z]/, {
       message: 'Password must contain at least one lowercase letter',
     })
