@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
+import axios from 'axios'
 
 export const signupSchema = z.object({
   firstName: z
@@ -44,8 +45,16 @@ export default function Signup() {
   })
 
   const onSubmit = (data: SignupFormData) => {
-    reset()
-    router.replace('/')
+    axios
+      .post('http://localhost:5000/api/auth/signup', data)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    // reset()
+    // router.replace('/')
   }
 
   return (
@@ -58,6 +67,7 @@ export default function Signup() {
         name="firstName"
         placeholder="first name"
         errors={errors}
+        keyboardType="default"
       />
       {/* Email */}
       <RHFInput
@@ -65,6 +75,7 @@ export default function Signup() {
         name="email"
         placeholder="email"
         errors={errors}
+        keyboardType="email-address"
       />
 
       {/* Password */}
@@ -73,6 +84,7 @@ export default function Signup() {
         name="password"
         placeholder="password"
         errors={errors}
+        keyboardType="visible-password"
       />
 
       {/* Submit */}

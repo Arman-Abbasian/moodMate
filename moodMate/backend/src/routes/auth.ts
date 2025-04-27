@@ -1,11 +1,11 @@
 // routes/auth.ts
 import express from 'express'
-import { validateSignup } from '../validations/authValidators'
-import { handleValidation } from '../validations/handleValidations'
-import { signupHandler } from '../handlers/authHandlers'
+import { validateSignup } from '../middlewares/validations/authValidators'
+import { handleValidation } from '../middlewares/validations/handleValidations'
+import { signupController } from '../controllers/authControllers'
 
 const router = express.Router()
 
-router.post('/signup', validateSignup, handleValidation, signupHandler)
+router.post('/signup', validateSignup, handleValidation, signupController)
 
 export default router

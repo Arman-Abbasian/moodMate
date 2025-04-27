@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import { User } from '../models/User'
 import * as bcrypt from 'bcryptjs'
 
-export const signupHandler: RequestHandler = async (req, res) => {
+export const signupController: RequestHandler = async (req, res) => {
   try {
     const { firstName, email, password } = req.body
 

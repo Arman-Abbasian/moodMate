@@ -14,7 +14,6 @@ interface RHFInputProps<T extends FieldValues> {
   placeholder: string
   keyboardType: KeyboardTypeOptions
   errors: FieldErrors<T>
-  rest: any
 }
 
 const RHFInput = <T extends FieldValues>({
@@ -38,7 +37,6 @@ const RHFInput = <T extends FieldValues>({
             keyboardType={keyboardType}
             autoCapitalize="none"
             className="w-full rounded-xl px-3 py-4 mb-1 bg-white focus:border-none hover:border-none"
-            {...rest}
           />
         )}
       />
