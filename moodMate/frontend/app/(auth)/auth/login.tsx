@@ -1,32 +1,80 @@
-import React from 'react'
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import { useRouter } from 'expo-router'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import RHFInput from '@/ui/RHFInput'
+import ActionButton from '@/ui/ActionButton'
+import axios from 'axios'
 
-export default function Login() {
+export const loginSchema = z.object({
+  email: z
+    .string({ required_error: 'Email is required' })
+    .email({ message: 'Please enter a valid email address' }),
+
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters long' })
+    .max(30, { message: 'Password must be less than 30 characters' }),
+})
+
+export type LoginFormData = z.infer<typeof loginSchema>
+
+export default function Signup() {
   const router = useRouter()
 
-  return (
-    <View className="flex-1 justify-center items-center bg-primary px-6">
-      <Text className="text-2xl font-bold mb-4">login</Text>
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
 
-      <TextInput
+  const onSubmit = (data: LoginFormData) => {
+    axios
+      .post('http://localhost:5000/api/auth/login', data)
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          console.log(res.data.message)
+          router.replace('/' as never)
+        } else {
+          console.log(res.data.message)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  return (
+    <View className="flex-1 justify-center items-center bg-primary px-6 gap-4">
+      <Text className="text-white text-center font-bold text-2xl">login</Text>
+      {/* Email */}
+      <RHFInput
+        control={control}
+        name="email"
         placeholder="email"
-        className="w-full  rounded-xl px-3 py-4 mb-4 bg-white"
+        errors={errors}
         keyboardType="email-address"
       />
-      <TextInput
+
+      {/* Password */}
+      <RHFInput
+        control={control}
+        name="password"
         placeholder="password"
-        secureTextEntry
-        className="w-full rounded-xl px-3 py-4 mb-6 bg-white"
+        errors={errors}
+        keyboardType="visible-password"
       />
 
-      <TouchableOpacity className="bg-secondary rounded-xl py-3 w-full mb-3">
-        <Text className="text-white text-center font-bold">login</Text>
-      </TouchableOpacity>
+      {/* Submit */}
+      <ActionButton onPress={handleSubmit(onSubmit)} text="login" />
 
-      <TouchableOpacity onPress={() => router.push('/auth/Signup' as never)}>
-        <Text className="text-gray-500">don't have an account? sign up</Text>
-      </TouchableOpacity>
+      <Text onPress={() => router.push('/auth/signup' as never)}>
+        don't have an account? sign up
+      </Text>
     </View>
   )
 }

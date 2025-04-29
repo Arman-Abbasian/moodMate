@@ -30,3 +30,17 @@ export const validateSignup = [
     .matches(/[0-9]/)
     .withMessage('Password must contain at least one number'),
 ]
+export const validateLogin = [
+  body('email')
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Please enter a valid email address'),
+
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
+    .isLength({ max: 30 }),
+]
