@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import { User } from '../models/User'
 import * as bcrypt from 'bcryptjs'
+import { sendError, sendSuccess } from '../utils/sendResponses'
 
 export const signupController: RequestHandler = async (req, res) => {
   try {
@@ -8,7 +9,14 @@ export const signupController: RequestHandler = async (req, res) => {
 
     const existingUser = await User.findOne({ email })
     if (existingUser) {
-      res.status(400).json({ message: 'Email already exists' })
+      sendError(
+        res,
+        'Email already exists',
+        {
+          email: 'This email is already taken',
+        },
+        400
+      )
       return
     }
 
@@ -19,11 +27,22 @@ export const signupController: RequestHandler = async (req, res) => {
       email,
       password: hashedPassword,
     })
-
-    res
-      .status(201)
-      .json({ message: 'User created successfully', userId: newUser._id })
+    sendSuccess(
+      res,
+      'User created successfully',
+      {
+        userId: newUser._id,
+      },
+      201
+    )
   } catch (err) {
-    res.status(500).json({ message: 'Something went wrong', error: err })
+    sendError(
+      res,
+      'Something went wrong',
+      {
+        error: err,
+      },
+      500
+    )
   }
 }

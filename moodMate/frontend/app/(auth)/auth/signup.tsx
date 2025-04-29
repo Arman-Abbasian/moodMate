@@ -49,6 +49,12 @@ export default function Signup() {
       .post('http://localhost:5000/api/auth/signup', data)
       .then((res) => {
         console.log(res)
+        if (res.status === 201) {
+          console.log(res.data.message)
+          router.replace('/auth/login' as never)
+        } else {
+          console.log(res.data.message)
+        }
       })
       .catch((err) => {
         console.log(err)
