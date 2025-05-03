@@ -96,21 +96,9 @@ export const loginController: RequestHandler = async (
       { expiresIn: '7d' }
     )
 
-    // ذخیره Refresh Token در کوکی امن
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    })
+    // ❌ حذف ذخیره در کوکی
 
-    // ذخیره Access Token در کوکی امن
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    })
+    // ✅ ارسال توکن‌ها در بدنه‌ی پاسخ
     sendSuccess(
       res,
       'Logged in successfully',
@@ -120,6 +108,8 @@ export const loginController: RequestHandler = async (
           firstName: existingUser.firstName,
           email: existingUser.email,
         },
+        accessToken,
+        refreshToken,
       },
       200
     )
