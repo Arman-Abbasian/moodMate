@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
+import * as Keychain from 'react-native-keychain'
 
 export const loginSchema = z.object({
   email: z
@@ -31,21 +32,30 @@ export default function Signup() {
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = (data: LoginFormData) => {
-    axios
-      .post('http://localhost:5000/api/auth/login', data)
-      .then((res) => {
-        console.log(res)
-        if (res.status === 200) {
-          console.log(res.data.message)
-          router.replace('/' as never)
-        } else {
-          console.log(res.data.message)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/login', data)
+
+      if (res.status === 200) {
+        const { accessToken, refreshToken } = res.data.data
+
+        // ذخیره امن توکن‌ها
+        await Keychain.setGenericPassword('accessToken', accessToken)
+        await Keychain.setInternetCredentials(
+          'refreshToken',
+          'user',
+          refreshToken
+        )
+
+        console.log('Login successful:', res.data.message)
+
+        router.replace('/' as never)
+      } else {
+        console.log('Unexpected status:', res.status)
+      }
+    } catch (err) {
+      console.log('Login failed:', err)
+    }
   }
 
   return (
