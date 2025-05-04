@@ -24,6 +24,7 @@ export default function Index() {
 
   const onSubmit = (value: MoodFormData) => {
     console.log(value)
+    console.log(value)
   }
   console.log(errors)
   return (
