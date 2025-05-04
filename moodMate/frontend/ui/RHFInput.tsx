@@ -1,4 +1,4 @@
-import { View, Text, TextInput, KeyboardTypeOptions } from 'react-native'
+import { View, Text, TextInput, TextInputProps } from 'react-native'
 import React from 'react'
 import {
   Control,
@@ -8,35 +8,33 @@ import {
   Path,
 } from 'react-hook-form'
 
-interface RHFInputProps<T extends FieldValues> {
+interface RHFInputProps<T extends FieldValues>
+  extends Omit<TextInputProps, 'name'> {
   control: Control<T>
   name: Path<T>
-  placeholder: string
-  keyboardType: KeyboardTypeOptions
   errors: FieldErrors<T>
 }
 
 const RHFInput = <T extends FieldValues>({
   control,
   name,
-  placeholder,
-  keyboardType,
   errors,
+  ...rest
 }: RHFInputProps<T>) => {
   return (
     <View className="w-full">
       <Controller
         control={control}
         name={name}
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value, onBlur } }) => (
           <TextInput
-            placeholder={placeholder}
-            placeholderTextColor="gray"
             value={value}
             onChangeText={onChange}
-            keyboardType={keyboardType}
+            onBlur={onBlur}
             autoCapitalize="none"
-            className="w-full rounded-xl px-3 py-4 mb-1 bg-white focus:border-none hover:border-none"
+            placeholderTextColor="gray"
+            className="w-full rounded-xl px-3 py-4 mb-1 bg-white"
+            {...rest}
           />
         )}
       />

@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
-import * as Keychain from 'react-native-keychain'
+import * as SecureStore from 'expo-secure-store'
 
 export const loginSchema = z.object({
   email: z
@@ -40,12 +40,8 @@ export default function Signup() {
         const { accessToken, refreshToken } = res.data.data
 
         // ذخیره امن توکن‌ها
-        await Keychain.setGenericPassword('accessToken', accessToken)
-        await Keychain.setInternetCredentials(
-          'refreshToken',
-          'user',
-          refreshToken
-        )
+        await SecureStore.setItemAsync('accessToken', accessToken)
+        await SecureStore.setItemAsync('refreshToken', refreshToken)
 
         console.log('Login successful:', res.data.message)
 
