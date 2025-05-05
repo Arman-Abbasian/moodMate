@@ -26,11 +26,10 @@ export default function Index() {
 
   const onSubmit = async (value: MoodFormData) => {
     console.log(value)
-    console.log(value)
     const res = await AddMood(value).unwrap()
     console.log(res)
   }
-  console.log(errors)
+
   return (
     <View className="flex-1 items-center bg-primary px-6">
       <ScrollView className="mt-4 w-full flex-1">

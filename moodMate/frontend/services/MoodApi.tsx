@@ -18,11 +18,11 @@ export const MoodApi = createApi({
     // Create
     AddMood: builder.mutation({
       query: (body) => ({
-        url: '/mood',
+        url: 'mood',
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['Mood'],
+      // invalidatesTags: ['Mood'],
     }),
 
     // Update

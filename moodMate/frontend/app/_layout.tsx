@@ -3,6 +3,8 @@ import './globals.css'
 import { useEffect } from 'react'
 import * as SecureStore from 'expo-secure-store'
 import { setAccessToken } from '@/utils/tokenManager'
+import { Provider } from 'react-redux'
+import { store } from '@/store'
 
 export default function RootLayout() {
   useEffect(() => {
@@ -19,5 +21,9 @@ export default function RootLayout() {
 
     loadToken()
   }, [])
-  return <Stack />
+  return (
+    <Provider store={store}>
+      <Stack />
+    </Provider>
+  )
 }

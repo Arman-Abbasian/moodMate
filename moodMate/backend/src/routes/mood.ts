@@ -5,3 +5,4 @@ import { validateMood } from '../middlewares/validations/moodValidators'
 
 const router = express.Router()
 router.post('/', validateMood, handleValidation, moodController)
+export default router
