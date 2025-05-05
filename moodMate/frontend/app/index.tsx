@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
+import { useAddMoodMutation } from '@/services/MoodApi'
 
 export const moodSchema = z.object({
   mood: z
@@ -14,6 +15,7 @@ export const moodSchema = z.object({
 
 export type MoodFormData = z.infer<typeof moodSchema>
 export default function Index() {
+  const [AddMood, { isLoading: AddMoodLoading }] = useAddMoodMutation()
   const {
     control,
     handleSubmit,
@@ -22,9 +24,11 @@ export default function Index() {
     resolver: zodResolver(moodSchema),
   })
 
-  const onSubmit = (value: MoodFormData) => {
+  const onSubmit = async (value: MoodFormData) => {
     console.log(value)
     console.log(value)
+    const res = await AddMood(value).unwrap()
+    console.log(res)
   }
   console.log(errors)
   return (

@@ -7,6 +7,7 @@ import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
+import { setAccessToken } from '@/utils/tokenManager'
 
 export const loginSchema = z.object({
   email: z
@@ -43,7 +44,7 @@ export default function Signup() {
         await SecureStore.setItemAsync('accessToken', accessToken)
         await SecureStore.setItemAsync('refreshToken', refreshToken)
 
-        console.log('Login successful:', res.data.message)
+        setAccessToken(accessToken) // حافظه RAM
 
         router.replace('/' as never)
       } else {
