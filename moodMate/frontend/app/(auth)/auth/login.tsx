@@ -8,6 +8,7 @@ import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 import { setAccessToken } from '@/utils/tokenManager'
+import { storage } from '@/utils/storage'
 
 export const loginSchema = z.object({
   email: z
@@ -36,13 +37,10 @@ export default function Signup() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', data)
-
       if (res.status === 200) {
         const { accessToken, refreshToken } = res.data.data
-
-        // ذخیره امن توکن‌ها
-        await SecureStore.setItemAsync('accessToken', accessToken)
-        await SecureStore.setItemAsync('refreshToken', refreshToken)
+        await storage.setItem('accessToken', accessToken)
+        await storage.setItem('refreshToken', refreshToken)
 
         setAccessToken(accessToken) // حافظه RAM
 

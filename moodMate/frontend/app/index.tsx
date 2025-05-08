@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
 import { useAddMoodMutation } from '@/services/MoodApi'
+import { getAccessToken } from '@/utils/tokenManager'
 
 export const moodSchema = z.object({
   mood: z
@@ -29,6 +30,8 @@ export default function Index() {
     const res = await AddMood(value).unwrap()
     console.log(res)
   }
+  const token = getAccessToken()
+  console.log(token)
 
   return (
     <View className="flex-1 items-center bg-primary px-6">
