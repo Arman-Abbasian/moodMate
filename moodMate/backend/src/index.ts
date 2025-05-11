@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import { connectDB } from './configs/db'
 import authRoutes from './routes/auth'
+import { authenticateToken } from './middlewares/token/authenticateToken'
 dotenv.config()
 
 const app = express()
@@ -18,7 +19,7 @@ app.use('/static', express.static(path.join(__dirname, '..', 'public')))
 app.use(cookieParser())
 // Routes
 app.use('/api/auth', authRoutes)
-app.use('/api/mood', moodRoutes)
+app.use('/api/mood', authenticateToken, moodRoutes)
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ error: 'route not found' })

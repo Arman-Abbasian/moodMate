@@ -1,7 +1,12 @@
-// models/User.ts
-import mongoose from 'mongoose'
+import mongoose, { Document, Model } from 'mongoose'
 
-const userSchema = new mongoose.Schema({
+export interface IUser extends Document {
+  firstName: string
+  email: string
+  password: string
+}
+
+const userSchema = new mongoose.Schema<IUser>({
   firstName: {
     type: String,
     required: [true, 'First name is required'],
@@ -20,4 +25,4 @@ const userSchema = new mongoose.Schema({
   },
 })
 
-export const User = mongoose.model('User', userSchema)
+export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema)
