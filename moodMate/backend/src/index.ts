@@ -1,12 +1,14 @@
+import './configs/loadEnv'
 import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import moodRoutes from './routes/mood'
 import path from 'path'
-import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import { connectDB } from './configs/db'
 import authRoutes from './routes/auth'
 import { authenticateToken } from './middlewares/token/authenticateToken'
+import dotenv from 'dotenv'
+
 dotenv.config()
 
 const app = express()

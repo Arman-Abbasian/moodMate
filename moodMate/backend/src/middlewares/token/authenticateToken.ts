@@ -1,9 +1,10 @@
-import jwt from 'jsonwebtoken'
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction, RequestHandler } from 'express'
 import { sendError } from '../../utils/sendResponses'
-import { User } from '../../models/User'
+import { IUser, User } from '../../models/User'
+import jwt from 'jsonwebtoken'
+import { HydratedDocument } from 'mongoose'
 
-export const authenticateToken = async (
+export const authenticateToken: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -14,7 +15,7 @@ export const authenticateToken = async (
 
     if (!token) {
       sendError(res, 'Access token is required', {}, 401)
-      return
+      return // این فقط برای جلوگیری از ادامه‌ی اجرای تابع
     }
 
     const decoded = jwt.verify(
@@ -27,6 +28,8 @@ export const authenticateToken = async (
       sendError(res, 'User does not exist', {}, 401)
       return
     }
+
+    req.user = user as HydratedDocument<IUser>
     next()
   } catch (err: any) {
     sendError(res, 'Invalid or expired token', err.message, 403)
