@@ -31,8 +31,8 @@ export const moodController = async (req: MoodRequest, res: Response) => {
     }
 
     res.json({
-      mood: topMood,
-      allMoods: sorted,
+      topMood,
+      moods: sorted,
       resources,
     })
   } catch (error) {

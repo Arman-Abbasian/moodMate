@@ -1,19 +1,24 @@
-// models/User.ts
 import mongoose from 'mongoose'
 
 const moodSchema = new mongoose.Schema({
-  moods: {
-    type: String,
-    required: [true, 'First name is required'],
-    minlength: [2, 'First name must be at least 2 characters'],
-    maxlength: [30, 'First name must be less than 30 characters'],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'please enter the userId'],
   },
-  topMood: {
+  text: {
     type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'],
+    required: [true, 'please enter the text'],
+    minlength: [5, 'you should enter minimum 5 characters'],
+    maxlength: [500, 'you should enter maximum 500 characters'],
+  },
+  topMood: { type: String, required: [true, 'please enter the topMood'] },
+  score: { type: Number, required: [true, 'please enter the score'] },
+  allMoods: { type: Array, required: [true, 'please enter the allMoods'] }, // [{ label, score }]
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 })
 
-export const User = mongoose.model('Mood', moodSchema)
+export default mongoose.model('MoodLog', moodSchema)
