@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: HydratedDocument<IUser>
+      userId?: string
     }
   }
 }

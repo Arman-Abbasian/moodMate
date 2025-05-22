@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import { User } from '../models/User'
 import * as bcrypt from 'bcryptjs'
 import { sendError, sendSuccess } from '../utils/sendResponses'
-import jwt from 'jsonwebtoken'
+import jwt, { VerifyErrors } from 'jsonwebtoken'
 
 export const signupController: RequestHandler = async (req, res) => {
   try {
@@ -109,6 +109,61 @@ export const loginController: RequestHandler = async (
         refreshToken,
       },
       200
+    )
+  } catch (err) {
+    sendError(res, 'Something went wrong', { error: err }, 500)
+  }
+}
+
+export const refreshTokenController: RequestHandler = async (req, res) => {
+  try {
+    const { refreshToken } = req.body
+
+    if (!refreshToken) {
+      sendError(res, 'Refresh token is required', {}, 400)
+      return
+    }
+
+    // Verify refresh token
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET as string,
+      async (err: VerifyErrors | null, decoded: any) => {
+        if (err || !decoded?.userId) {
+          sendError(res, 'Invalid refresh token', {}, 403)
+          return
+        }
+
+        // Optional: Check if token exists in DB
+        const user = await User.findById(decoded.userId)
+        if (!user) {
+          sendError(res, 'User not found', {}, 404)
+          return
+        }
+
+        // Generate new tokens
+        const newAccessToken = jwt.sign(
+          { userId: user._id },
+          process.env.JWT_ACCESS_SECRET as string,
+          { expiresIn: '1d' }
+        )
+
+        const newRefreshToken = jwt.sign(
+          { userId: user._id },
+          process.env.JWT_REFRESH_SECRET as string,
+          { expiresIn: '7d' }
+        )
+
+        sendSuccess(
+          res,
+          'Tokens refreshed successfully',
+          {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          },
+          200
+        )
+      }
     )
   } catch (err) {
     sendError(res, 'Something went wrong', { error: err }, 500)

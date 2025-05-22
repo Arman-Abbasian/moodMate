@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
-import * as SecureStore from 'expo-secure-store'
 import { setAccessToken } from '@/utils/tokenManager'
 import { storage } from '@/utils/storage'
 
@@ -23,7 +22,7 @@ export const loginSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>
 
-export default function Signup() {
+export default function Login() {
   const router = useRouter()
 
   const {

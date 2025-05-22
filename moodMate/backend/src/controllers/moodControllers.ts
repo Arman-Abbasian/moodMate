@@ -40,3 +40,11 @@ export const moodController = async (req: MoodRequest, res: Response) => {
     res.status(500).json({ error: 'AI mood detection failed.' })
   }
 }
+
+export const statisticsController = async (req: MoodRequest, res: Response) => {
+  try {
+    const { mood } = req.body
+  } catch (error) {
+    console.error(error)
+  }
+}
