@@ -5,7 +5,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
 import { useAddMoodMutation } from '@/services/MoodApi'
-import { getAccessToken } from '@/utils/tokenManager'
+import { useAuth } from '@/context/AuthContext'
+import { Redirect } from 'expo-router'
 
 export const moodSchema = z.object({
   mood: z
@@ -30,8 +31,11 @@ export default function Index() {
     const res = await AddMood(value).unwrap()
     console.log(res)
   }
-  const token = getAccessToken()
-  console.log(token)
+  const { isAuthenticated } = useAuth()
+  console.log(isAuthenticated)
+  if (isAuthenticated === null) return null // یا یک spinner نمایش بده
+
+  if (!isAuthenticated) return <Redirect href="/auth/login" />
 
   return (
     <View className="flex-1 items-center bg-primary px-6">
@@ -48,7 +52,11 @@ export default function Index() {
             textAlignVertical="top"
           />
           {/* Submit */}
-          <ActionButton onPress={handleSubmit(onSubmit)} text="send" />
+          <ActionButton
+            onPress={handleSubmit(onSubmit)}
+            text="send"
+            loading={AddMoodLoading}
+          />
         </View>
       </ScrollView>
     </View>
