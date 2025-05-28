@@ -115,7 +115,10 @@ export const loginController: RequestHandler = async (
   }
 }
 
-export const refreshTokenController: RequestHandler = async (req, res) => {
+export const refreshTokenController: RequestHandler = async (
+  req,
+  res
+): Promise<void> => {
   try {
     const { refreshToken } = req.body
 
@@ -165,7 +168,12 @@ export const refreshTokenController: RequestHandler = async (req, res) => {
         )
       }
     )
-  } catch (err) {
+  } catch (err: any) {
+    if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
+      sendError(res, 'Invalid or expired refresh token', {}, 403)
+      return
+    }
+
     sendError(res, 'Something went wrong', { error: err }, 500)
   }
 }

@@ -32,6 +32,6 @@ export const authenticateToken: RequestHandler = async (
     req.user = user as HydratedDocument<IUser>
     next()
   } catch (err: any) {
-    sendError(res, 'Invalid or expired token', err.message, 403)
+    sendError(res, 'Invalid or expired token', err.message, 401)
   }
 }
