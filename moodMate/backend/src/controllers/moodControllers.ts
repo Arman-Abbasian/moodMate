@@ -2,6 +2,13 @@ import { Request, Response } from 'express'
 import { moodResources } from '../data/moodResources'
 import app from '../services/axios/axiosInstance'
 import { getRandomItem } from '../utils/getRandomItem'
+import Mood from '../models/Mood'
+
+interface MoodItem {
+  label: string
+  score: number
+}
+
 interface MoodRequest extends Request {
   body: {
     mood: string
@@ -17,22 +24,28 @@ export const moodController = async (req: MoodRequest, res: Response) => {
       { inputs: mood }
     )
 
-    const result = response.data
+    const result = response.data.flat()
     const sorted = result.sort((a: any, b: any) => b.score - a.score)
-    const topMood = sorted[0].label.toLowerCase()
-
-    const allResources = moodResources[topMood]
-
+    const simplified: MoodItem[] = sorted.map((item: MoodItem) => ({
+      label: item.label,
+      score: Math.round(item.score * 100),
+    }))
+    const topMood = simplified[0]
+    const allResources = moodResources[topMood.label.toLocaleLowerCase()]
     const resources = {
       image: getRandomItem(allResources?.images || []),
-      video: getRandomItem(allResources?.videos || []),
       music: getRandomItem(allResources?.music || []),
       quote: getRandomItem(allResources?.quotes || []),
     }
 
+    await Mood.create({
+      userId: req.userId, // مطمئن شو middleware احراز هویت، userId رو اضافه می‌کنه
+      topMood,
+      moods: simplified,
+    })
     res.json({
       topMood,
-      moods: sorted,
+      moods: simplified,
       resources,
     })
   } catch (error) {

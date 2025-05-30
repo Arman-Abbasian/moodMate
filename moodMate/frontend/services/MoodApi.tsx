@@ -1,9 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import baseQueryWithErrorHandler from './globalApi'
+import { baseQueryWithReauth } from './globalApi'
 
 export const MoodApi = createApi({
   reducerPath: 'Mood', // Unique key for the reducer
-  baseQuery: baseQueryWithErrorHandler,
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['Mood'], // Tags for caching
   endpoints: (builder) => ({
     // Read

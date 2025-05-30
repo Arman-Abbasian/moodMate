@@ -29,5 +29,5 @@ router.post(
   handleValidation,
   loginController
 )
-router.get('refreshToken', blockIfAccessTokenValid, refreshTokenController)
+router.post('refreshToken', blockIfAccessTokenValid, refreshTokenController)
 export default router
