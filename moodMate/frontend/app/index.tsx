@@ -1,12 +1,17 @@
 import RHFInput from '@/ui/RHFInput'
 import { useForm } from 'react-hook-form'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, View, Text, Image } from 'react-native'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
 import { useAddMoodMutation } from '@/services/MoodApi'
 import { useAuth } from '@/context/AuthContext'
 import { Redirect } from 'expo-router'
+import { useState } from 'react'
+import MoodChart from './components/MoodChart'
+import { Mood } from '@/types/glabalTypes'
+import MusicPlayer from './components/MusicPlayer'
+import { getAbsoluteUrl } from '@/utils/getAbsoluteUrl'
 
 export const moodSchema = z.object({
   mood: z
@@ -16,7 +21,18 @@ export const moodSchema = z.object({
 })
 
 export type MoodFormData = z.infer<typeof moodSchema>
+type AddMoodType = {
+  topMood: { label: string; score: number }
+  moods: Array<{ label: string; score: number }>
+  resources: {
+    image: string
+    music: string
+    quote: string
+  }
+}
+
 export default function Index() {
+  const [data, setData] = useState<AddMoodType | null>(null)
   const [AddMood, { isLoading: AddMoodLoading }] = useAddMoodMutation()
   const {
     control,
@@ -27,9 +43,8 @@ export default function Index() {
   })
 
   const onSubmit = async (value: MoodFormData) => {
-    console.log(value)
     const res = await AddMood(value).unwrap()
-    console.log(res)
+    setData(res)
   }
   const { isAuthenticated } = useAuth()
   console.log(isAuthenticated)
@@ -58,6 +73,21 @@ export default function Index() {
             loading={AddMoodLoading}
           />
         </View>
+        {data && (
+          <View className="flex gap-5">
+            <Text className="text-2xl">Main Feel: {data.topMood.label}</Text>
+            <View>
+              <MoodChart data={data.moods} />
+            </View>
+            <Text>{data.resources.quote}</Text>
+            <Image
+              source={{ uri: getAbsoluteUrl(data.resources.image) }}
+              style={{ width: 300, height: 200, borderRadius: 8 }}
+              resizeMode="cover"
+            />
+            <MusicPlayer uri={getAbsoluteUrl(data.resources.music)} />
+          </View>
+        )}
       </ScrollView>
     </View>
   )
