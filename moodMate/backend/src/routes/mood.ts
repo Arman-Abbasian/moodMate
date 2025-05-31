@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  getMoodDetailsByDateAndLabel,
   moodController,
   statisticsController,
 } from '../controllers/moodControllers'
@@ -15,11 +16,6 @@ router.post(
   handleValidation,
   moodController
 )
-router.post(
-  '/statistics',
-  isAuthenticated,
-  validateMood,
-  handleValidation,
-  statisticsController
-)
+router.post('/statistics', isAuthenticated, statisticsController)
+router.get('/details', isAuthenticated, getMoodDetailsByDateAndLabel)
 export default router
