@@ -16,6 +16,6 @@ router.post(
   handleValidation,
   moodController
 )
-router.post('/statistics', isAuthenticated, statisticsController)
+router.get('/statistics', isAuthenticated, statisticsController)
 router.get('/details', isAuthenticated, getMoodDetailsByDateAndLabel)
 export default router

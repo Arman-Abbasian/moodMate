@@ -7,13 +7,13 @@ export const MoodApi = createApi({
   tagTypes: ['Mood'], // Tags for caching
   endpoints: (builder) => ({
     // Read
-    // GetَAllDoctorOrderFormBySerial: builder.query({
-    //   query: (serial) => ({
-    //     url: `api/DigitalFiles/DoctorOrderForm/GetAllDoctorOrderFormBySerial?serial=${serial}`,
-    //     method: 'POST',
-    //   }),
-    //   providesTags: ['DoctorOrderForm'],
-    // }),
+    GetَAllMoods: builder.query({
+      query: () => ({
+        url: `mood/statistics`,
+        method: 'GET',
+      }),
+      providesTags: ['Mood'],
+    }),
 
     // Create
     AddMood: builder.mutation({
@@ -63,4 +63,4 @@ export const MoodApi = createApi({
   }),
 })
 
-export const { useAddMoodMutation } = MoodApi
+export const { useAddMoodMutation, useGetَAllMoodsQuery } = MoodApi

@@ -61,27 +61,28 @@ export const statisticsController = async (req: MoodRequest, res: Response) => {
     const userId = req.userId
     const range = (req.query.range as string) || 'month'
 
+    const end = dayjs().endOf('day').toDate()
     let start: Date
-    let end: Date = dayjs().endOf('day').toDate()
 
     switch (range) {
       case 'day':
-        start = dayjs().startOf('day').toDate()
+        start = dayjs().subtract(1, 'day').startOf('day').toDate()
         break
       case 'week':
-        start = dayjs().startOf('week').toDate()
+        start = dayjs().subtract(1, 'week').startOf('day').toDate()
         break
       case 'month':
-        start = dayjs().startOf('month').toDate()
+        start = dayjs().subtract(1, 'month').startOf('day').toDate()
         break
       case 'year':
-        start = dayjs().startOf('year').toDate()
+        start = dayjs().subtract(1, 'year').startOf('day').toDate()
         break
       default:
         sendError(res, 'Invalid range. Use day, week, month, or year.')
         return
     }
 
+    console.log(start, end, range)
     const moods = await Mood.find({
       userId,
       createdAt: { $gte: start, $lte: end },
@@ -90,53 +91,56 @@ export const statisticsController = async (req: MoodRequest, res: Response) => {
       .sort({ createdAt: 1 })
 
     const formatted = moods.map((entry) => ({
-      date: entry.createdAt,
-      topMood: entry.topMood,
+      date: dayjs(entry.createdAt).format('DD MMM YYYY'),
+      mood: entry.topMood.label,
+      score: entry.topMood.score,
+      createdAt: entry.createdAt,
     }))
 
-    sendSuccess(res, `Top moods for ${range} retrieved successfully`, formatted)
+    sendSuccess(
+      res,
+      `Top moods for ${range} retrieved successfully`,
+      formatted,
+      200
+    )
   } catch (error) {
     console.error('Error in getTopMoodsByRange:', error)
     sendError(res, 'Failed to get mood statistics')
   }
 }
+
 export const getMoodDetailsByDateAndLabel = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const userId = req.userId
-    const { date, mood } = req.query
+    const userId = req.user?._id
+    const { createdAt } = req.query
 
-    if (!date || typeof date !== 'string') {
-      sendError(res, 'Please provide a valid date in YYYY-MM-DD format')
+    if (!createdAt) {
+      sendError(res, 'createdAt is required', 400)
       return
     }
 
-    if (!mood || typeof mood !== 'string') {
-      sendError(res, 'Please provide a mood label (e.g. "sadness")')
-      return
-    }
+    const createdDate = new Date(createdAt as string)
 
-    const start = dayjs(date).startOf('day').toDate()
-    const end = dayjs(date).endOf('day').toDate()
-
-    const moods = await Mood.find({
+    // رکوردی با userId و createdAt دقیق پیدا کن
+    const mood = await Mood.findOne({
       userId,
-      'topMood.label': mood,
-      createdAt: { $gte: start, $lte: end },
+      createdAt: createdDate,
     })
-      .select('topMood moods createdAt')
-      .sort({ createdAt: 1 })
 
-    if (!moods.length) {
-      sendSuccess(res, 'No matching mood data found', [])
+    if (!mood) {
+      sendError(res, 'Mood not found for this timestamp', 404)
       return
     }
 
-    sendSuccess(res, `Mood entries for ${mood} on ${date}`, moods)
-  } catch (error) {
-    console.error('Error in getMoodDetailsByDateAndLabel:', error)
-    sendError(res, 'Failed to get mood details')
+    sendSuccess(res, 'Mood details retrieved successfully', {
+      date: dayjs(mood.createdAt).format('DD MMM YYYY HH:mm'),
+      moods: mood.moods,
+    })
+  } catch (err) {
+    console.error(err)
+    sendError(res, 'Failed to fetch mood detail')
   }
 }
