@@ -1,39 +1,38 @@
-import { Mood } from '@/types/glabalTypes'
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
+import { AllMoodsQueryData } from '../statistic'
 
 type Props = {
-  chartData: any
-  moods: Mood[]
+  chartData: AllMoodsQueryData[]
 }
 
 export default function AllMoodsChart(props: Props) {
-  const { chartData, moods } = props
+  const { chartData } = props
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart data={chartData}>
-        <XAxis dataKey="score" />
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <XAxis dataKey="date" />
         <YAxis />
-        <Tooltip />
-        <Legend />
-        {moods.map((mood) => (
-          <Line
-            key={mood.label}
-            type="monotone"
-            dataKey={mood.score}
-            stroke={'#ffc658'}
-            strokeWidth={2}
-            dot={false}
-          />
-        ))}
+        <Tooltip
+          formatter={(value: any, name: any, props: any) => {
+            return [`${value}`, props.payload.mood]
+          }}
+        />
+        <Line
+          type="monotone"
+          dataKey="score"
+          stroke="#8884d8"
+          strokeWidth={2}
+          dot={{ r: 5 }}
+        />
       </LineChart>
     </ResponsiveContainer>
   )
