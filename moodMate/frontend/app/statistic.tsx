@@ -15,7 +15,7 @@ export default function Statistic() {
     useGetَAllMoodsQuery({})
   console.log(AllMoodsQuery?.data)
   return (
-    <View>
+    <View className="p-10">
       <AllMoodsChart
         chartData={(AllMoodsQuery?.data as AllMoodsQueryData[]) || []}
       />
