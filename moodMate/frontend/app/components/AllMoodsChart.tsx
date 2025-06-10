@@ -4,7 +4,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
 import { AllMoodsQueryData } from '../statistic'
@@ -29,14 +28,44 @@ const CustomizedDot = (props: any) => {
   const { cx, cy, payload } = props
   const emoji = moodEmojis[payload.mood] || '❓'
 
+  const clickHandler = () => {
+    console.log('clickHandler')
+  }
   if (!cx || !cy) return null
 
   return (
-    <svg x={cx - 10} y={cy - 10} width={30} height={30}>
-      <text x={10} y={15} textAnchor="middle" fontSize={30}>
+    <svg
+      x={cx - 15}
+      y={cy - 10}
+      width={25}
+      height={25}
+      onClick={() => clickHandler()}
+    >
+      <text x={15} y={15} textAnchor="middle" fontSize={15}>
         {emoji}
       </text>
     </svg>
+  )
+}
+
+const CustomTick = (props: any) => {
+  const { x, y, payload } = props
+  const [day, month, year] = payload.value.split(' ')
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={5} dy={16} textAnchor="middle" fontSize={10}>
+        <tspan x="0" dy="0">
+          {day}
+        </tspan>
+        <tspan x="0" dy="14">
+          {month}
+        </tspan>
+        <tspan x="0" dy="34">
+          {year}
+        </tspan>
+      </text>
+    </g>
   )
 }
 
@@ -48,8 +77,8 @@ export default function AllMoodsChart(props: Props) {
       <div style={{ width: chartData.length * 100 }}>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
-            <XAxis dataKey="date" />
-            <YAxis />
+            <XAxis dataKey="date" tick={<CustomTick />} interval={0} />
+            <YAxis domain={[0, 110]} />
             <Tooltip
               formatter={(value: any, name: any, props: any) => {
                 return [`${value}`, props.payload.mood]
