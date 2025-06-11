@@ -13,7 +13,7 @@ export default function Statistic() {
   //RTK
   const { data: AllMoodsQuery, isLoading: AllMoodsQueryLoading } =
     useGetَAllMoodsQuery({})
-  console.log(AllMoodsQuery?.data)
+
   return (
     <View className="p-10">
       <AllMoodsChart

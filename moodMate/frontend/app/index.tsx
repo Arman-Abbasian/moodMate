@@ -1,6 +1,6 @@
 import RHFInput from '@/ui/RHFInput'
 import { useForm } from 'react-hook-form'
-import { ScrollView, View, Text, Image } from 'react-native'
+import { ScrollView, View, Text, Image, Platform } from 'react-native'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
@@ -10,8 +10,10 @@ import { Redirect } from 'expo-router'
 import { useState } from 'react'
 import MoodChart from './components/MoodChart'
 import { Mood } from '@/types/glabalTypes'
-import MusicPlayer from './components/MusicPlayer'
+import MusicPlayer from './components/MusicPlayerWeb'
 import { getAbsoluteUrl } from '@/utils/getAbsoluteUrl'
+import MusicPlayerWeb from './components/MusicPlayerWeb'
+import MusicPlayerNative from './components/MusicPlayerNative'
 
 export const moodSchema = z.object({
   mood: z
@@ -82,10 +84,14 @@ export default function Index() {
             <Text>{data.resources.quote}</Text>
             <Image
               source={{ uri: getAbsoluteUrl(data.resources.image) }}
-              style={{ width: 300, height: 200, borderRadius: 8 }}
+              style={{ width: '100%', height: 200, borderRadius: 8 }}
               resizeMode="cover"
             />
-            <MusicPlayer uri={getAbsoluteUrl(data.resources.music)} />
+            {Platform.OS === 'web' ? (
+              <MusicPlayerWeb uri={getAbsoluteUrl(data.resources.music)} />
+            ) : (
+              <MusicPlayerNative uri={getAbsoluteUrl(data.resources.music)} />
+            )}
           </View>
         )}
       </ScrollView>
