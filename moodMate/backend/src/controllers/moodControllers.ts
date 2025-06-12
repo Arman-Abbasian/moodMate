@@ -82,7 +82,6 @@ export const statisticsController = async (req: MoodRequest, res: Response) => {
         return
     }
 
-    console.log(start, end, range)
     const moods = await Mood.find({
       userId,
       createdAt: { $gte: start, $lte: end },
@@ -115,19 +114,17 @@ export const getMoodDetailsByDateAndLabel = async (
 ) => {
   try {
     const userId = req.user?._id
-    const { createdAt } = req.query
+    const { moodId } = req.query.moodId
 
-    if (!createdAt) {
-      sendError(res, 'createdAt is required', 400)
+    if (!moodId) {
+      sendError(res, 'id is required', 400)
       return
     }
-
-    const createdDate = new Date(createdAt as string)
 
     // رکوردی با userId و createdAt دقیق پیدا کن
     const mood = await Mood.findOne({
       userId,
-      createdAt: createdDate,
+      _id: moodId,
     })
 
     if (!mood) {
