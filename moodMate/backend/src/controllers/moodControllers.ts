@@ -90,6 +90,7 @@ export const statisticsController = async (req: MoodRequest, res: Response) => {
       .sort({ createdAt: 1 })
 
     const formatted = moods.map((entry) => ({
+      id: entry._id.toString(),
       date: dayjs(entry.createdAt).format('DD MMM YYYY'),
       mood: entry.topMood.label,
       score: entry.topMood.score,
@@ -114,14 +115,14 @@ export const getMoodDetailsByDateAndLabel = async (
 ) => {
   try {
     const userId = req.user?._id
-    const { moodId } = req.query.moodId
+    const moodId = req.params.moodId
 
     if (!moodId) {
       sendError(res, 'id is required', 400)
       return
     }
 
-    // رکوردی با userId و createdAt دقیق پیدا کن
+    // رکوردی با userId و cre atedAt دقیق پیدا کن
     const mood = await Mood.findOne({
       userId,
       _id: moodId,
@@ -133,7 +134,6 @@ export const getMoodDetailsByDateAndLabel = async (
     }
 
     sendSuccess(res, 'Mood details retrieved successfully', {
-      date: dayjs(mood.createdAt).format('DD MMM YYYY HH:mm'),
       moods: mood.moods,
     })
   } catch (err) {

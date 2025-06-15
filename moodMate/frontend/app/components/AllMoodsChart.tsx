@@ -10,6 +10,7 @@ import { AllMoodsQueryData } from '../statistic'
 
 type Props = {
   chartData: AllMoodsQueryData[]
+  onDotClickHandler: (id: string) => void
 }
 
 // نگاشت حس‌ها به ایموجی‌ها
@@ -25,21 +26,16 @@ const moodEmojis: Record<string, string> = {
 
 // کاستوم دات برای رندر ایموجی
 const CustomizedDot = (props: any) => {
-  const { cx, cy, payload } = props
+  const { cx, cy, payload, onClick } = props
   const emoji = moodEmojis[payload.mood] || '❓'
-
-  const clickHandler = () => {
-    console.log('clickHandler')
-  }
   if (!cx || !cy) return null
-
   return (
     <svg
       x={cx - 15}
       y={cy - 10}
       width={25}
       height={25}
-      onClick={() => clickHandler()}
+      onClick={() => onClick(payload.id)}
     >
       <text x={15} y={15} textAnchor="middle" fontSize={15}>
         {emoji}
@@ -70,7 +66,7 @@ const CustomTick = (props: any) => {
 }
 
 export default function AllMoodsChart(props: Props) {
-  const { chartData } = props
+  const { chartData, onDotClickHandler } = props
 
   return (
     <div className="overflow-x-auto">
@@ -89,7 +85,7 @@ export default function AllMoodsChart(props: Props) {
               dataKey="score"
               stroke="#8884d8"
               strokeWidth={2}
-              dot={<CustomizedDot />}
+              dot={<CustomizedDot onClick={onDotClickHandler} />}
             />
           </LineChart>
         </ResponsiveContainer>

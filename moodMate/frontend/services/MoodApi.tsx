@@ -14,6 +14,13 @@ export const MoodApi = createApi({
       }),
       providesTags: ['Mood'],
     }),
+    GetَMood: builder.query({
+      query: (moodId: string) => ({
+        url: `mood/${moodId}`,
+        method: 'GET',
+      }),
+      providesTags: ['Mood'],
+    }),
 
     // Create
     AddMood: builder.mutation({
@@ -63,4 +70,8 @@ export const MoodApi = createApi({
   }),
 })
 
-export const { useAddMoodMutation, useGetَAllMoodsQuery } = MoodApi
+export const {
+  useAddMoodMutation,
+  useGetَAllMoodsQuery,
+  useLazyGetَMoodQuery,
+} = MoodApi
