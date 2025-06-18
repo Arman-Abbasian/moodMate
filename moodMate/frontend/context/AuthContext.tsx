@@ -1,3 +1,4 @@
+import { isTokenExpired } from '@/utils/checkTokenExpiration'
 import { storage } from '@/utils/storage'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -21,8 +22,16 @@ export const AuthProvider = (props: AuthProviderProps) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = await storage.getItem('accessToken')
+      console.log(isTokenExpired(token))
+      if (token && isTokenExpired(token)) {
+        await storage.deleteItem('accessToken')
+        setIsAuthenticated(false)
+        return
+      }
+
       setIsAuthenticated(!!token)
     }
+
     checkAuth()
   }, [])
 
