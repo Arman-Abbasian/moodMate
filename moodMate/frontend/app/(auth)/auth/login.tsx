@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import axios from 'axios'
-import { setAccessToken } from '@/utils/tokenManager'
+import { saveAccessToken } from '@/utils/tokenManager'
 import { storage } from '@/utils/storage'
 
 export const loginSchema = z.object({
@@ -41,9 +41,9 @@ export default function Login() {
         await storage.setItem('accessToken', accessToken)
         await storage.setItem('refreshToken', refreshToken)
 
-        setAccessToken(accessToken) // حافظه RAM
+        saveAccessToken(accessToken) // حافظه RAM
 
-        router.replace('/' as never)
+        router.navigate('/')
       } else {
         console.log('Unexpected status:', res.status)
       }

@@ -1,9 +1,9 @@
 import { useGetَAllMoodsQuery, useLazyGetَMoodQuery } from '@/services/MoodApi'
 import { View } from 'react-native'
-import AllMoodsChart from './components/AllMoodsChart'
+import AllMoodsChart from '../components/AllMoodsChart'
 import { useEffect, useState } from 'react'
 import { number } from 'zod'
-import MoodChart from './components/MoodChart'
+import MoodChart from '../components/MoodChart'
 import { Mood } from '@/types/glabalTypes'
 
 export type AllMoodsQueryData = {
