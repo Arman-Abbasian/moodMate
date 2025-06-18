@@ -38,7 +38,6 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
     checkAuth()
   }, [])
-  console.log(isAuthenticated)
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>

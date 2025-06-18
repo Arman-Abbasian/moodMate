@@ -2,9 +2,9 @@ import { useGetَAllMoodsQuery, useLazyGetَMoodQuery } from '@/services/MoodApi
 import { View } from 'react-native'
 import AllMoodsChart from '../components/AllMoodsChart'
 import { useEffect, useState } from 'react'
-import { number } from 'zod'
 import MoodChart from '../components/MoodChart'
 import { Mood } from '@/types/glabalTypes'
+import ScreenWrapper from '@/ui/ScreenWrapper'
 
 export type AllMoodsQueryData = {
   id: string
@@ -30,7 +30,7 @@ export default function Statistic() {
     if (moodId) LazyGetَMood(moodId)
   }, [moodId])
   return (
-    <View className="p-10">
+    <ScreenWrapper>
       <AllMoodsChart
         chartData={(AllMoodsQuery?.data as AllMoodsQueryData[]) || []}
         onDotClickHandler={dotClickHandler}
@@ -40,6 +40,6 @@ export default function Statistic() {
           <MoodChart data={moodData?.data?.moods as Mood[]} />
         </View>
       )}
-    </View>
+    </ScreenWrapper>
   )
 }

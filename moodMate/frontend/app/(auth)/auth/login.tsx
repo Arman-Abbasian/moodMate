@@ -5,9 +5,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
-import axios from 'axios'
-import { saveAccessToken } from '@/utils/tokenManager'
 import { storage } from '@/utils/storage'
+import { useLoginMutation } from '@/services/authApi'
 
 export const loginSchema = z.object({
   email: z
@@ -33,19 +32,21 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   })
 
+  //RTK
+  const [Login, { isLoading: LoginLoading }] = useLoginMutation()
+
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', data)
-      if (res.status === 200) {
+      const res = await Login(data)
+      console.log(res)
+      if (res?.data?.isSuccess) {
         const { accessToken, refreshToken } = res.data.data
         await storage.setItem('accessToken', accessToken)
         await storage.setItem('refreshToken', refreshToken)
 
-        saveAccessToken(accessToken) // حافظه RAM
-
         router.navigate('/')
       } else {
-        console.log('Unexpected status:', res.status)
+        console.log('Login failed:', res.error)
       }
     } catch (err) {
       console.log('Login failed:', err)
@@ -74,7 +75,11 @@ export default function Login() {
       />
 
       {/* Submit */}
-      <ActionButton onPress={handleSubmit(onSubmit)} text="login" />
+      <ActionButton
+        onPress={handleSubmit(onSubmit)}
+        text="login"
+        loading={LoginLoading}
+      />
 
       <Text onPress={() => router.push('/auth/signup' as never)}>
         don't have an account? sign up
