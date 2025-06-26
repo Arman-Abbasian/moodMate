@@ -5,8 +5,10 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
-import axios from 'axios'
+import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
+import { useSignupMutation } from '@/services/AuthApi'
 
+//form schema
 export const signupSchema = z.object({
   firstName: z
     .string({ required_error: 'First name is required' })
@@ -33,7 +35,12 @@ export const signupSchema = z.object({
 export type SignupFormData = z.infer<typeof signupSchema>
 
 export default function Signup() {
+  //hooks
   const router = useRouter()
+
+  useCheckTokenExpiration()
+
+  const [Signup, { isLoading: SignupLoading }] = useSignupMutation()
 
   const {
     control,
@@ -43,28 +50,25 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
   })
 
-  const onSubmit = (data: SignupFormData) => {
-    axios
-      .post('http://localhost:5000/api/auth/signup', data)
-      .then((res) => {
-        console.log(res)
-        if (res.status === 201) {
-          console.log(res.data.message)
-          router.replace('/auth/login' as never)
-        } else {
-          console.log(res.data.message)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    // reset()
-    // router.replace('/')
+  //functions
+  const onSubmit = async (data: SignupFormData) => {
+    try {
+      const res = await Signup(data)
+      if (res?.data?.isSuccess) {
+        router.navigate('/auth/login')
+      } else {
+        console.log('Signup failed:', res.data.message)
+      }
+    } catch (err) {
+      console.log('Signup failed:', err)
+    }
   }
 
   return (
-    <View className="flex-1 justify-center items-center bg-primary px-6 gap-4">
-      <Text className="text-white text-center font-bold text-2xl">sign up</Text>
+    <View className="flex-1 justify-center items-center px-6 gap-4">
+      <Text className="text-primary text-center font-bold text-2xl">
+        sign up
+      </Text>
 
       {/* First Name */}
       <RHFInput
@@ -73,6 +77,7 @@ export default function Signup() {
         placeholder="first name"
         errors={errors}
         keyboardType="default"
+        editable={SignupLoading}
       />
       {/* Email */}
       <RHFInput
@@ -81,6 +86,7 @@ export default function Signup() {
         placeholder="email"
         errors={errors}
         keyboardType="email-address"
+        editable={SignupLoading}
       />
 
       {/* Password */}
@@ -90,12 +96,20 @@ export default function Signup() {
         placeholder="password"
         errors={errors}
         keyboardType="visible-password"
+        editable={SignupLoading}
       />
 
       {/* Submit */}
-      <ActionButton onPress={handleSubmit(onSubmit)} text="sign up" />
+      <ActionButton
+        onPress={handleSubmit(onSubmit)}
+        text="sign up"
+        loading={SignupLoading}
+      />
 
-      <Text onPress={() => router.push('/auth/login' as never)}>
+      <Text
+        className="text-primary"
+        onPress={() => router.navigate('/auth/login' as never)}
+      >
         have an account? login
       </Text>
     </View>

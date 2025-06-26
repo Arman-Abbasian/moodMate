@@ -12,7 +12,7 @@ const ScreenWrapper = ({
   ...rest
 }: ScreenWrapperProps) => {
   return (
-    <View className="flex-1 items-center bg-primary px-6" {...rest}>
+    <View className="flex-1 items-center bg-background px-6" {...rest}>
       <ScrollView className="mt-4 w-full flex-1" {...scrollProps}>
         {children}
       </ScrollView>

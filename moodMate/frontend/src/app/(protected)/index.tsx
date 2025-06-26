@@ -1,6 +1,6 @@
 import RHFInput from '@/ui/RHFInput'
 import { useForm } from 'react-hook-form'
-import { ScrollView, View, Text, Image, Platform } from 'react-native'
+import { View, Text, Image, Platform } from 'react-native'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
@@ -11,7 +11,9 @@ import { getAbsoluteUrl } from '@/utils/getAbsoluteUrl'
 import MusicPlayerWeb from '../components/MusicPlayerWeb'
 import MusicPlayerNative from '../components/MusicPlayerNative'
 import ScreenWrapper from '@/ui/ScreenWrapper'
+import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
 
+//form schema
 export const moodSchema = z.object({
   mood: z
     .string({ required_error: 'please enter your mood' })
@@ -20,6 +22,8 @@ export const moodSchema = z.object({
 })
 
 export type MoodFormData = z.infer<typeof moodSchema>
+
+//types
 type AddMoodType = {
   topMood: { label: string; score: number }
   moods: Array<{ label: string; score: number }>
@@ -31,8 +35,14 @@ type AddMoodType = {
 }
 
 export default function Index() {
+  //states
   const [data, setData] = useState<AddMoodType | null>(null)
+  //RTK
   const [AddMood, { isLoading: AddMoodLoading }] = useAddMoodMutation()
+
+  //hooks
+  useCheckTokenExpiration()
+
   const {
     control,
     handleSubmit,
@@ -41,6 +51,7 @@ export default function Index() {
     resolver: zodResolver(moodSchema),
   })
 
+  //functions
   const onSubmit = async (value: MoodFormData) => {
     const res = await AddMood(value).unwrap()
     setData(res)
@@ -68,7 +79,7 @@ export default function Index() {
         />
       </View>
       {data && (
-        <View className="flex gap-5">
+        <View className="flex gap-5 mt-10">
           <Text className="text-2xl">Main Feel: {data.topMood.label}</Text>
           <View>
             <MoodChart data={data.moods} />

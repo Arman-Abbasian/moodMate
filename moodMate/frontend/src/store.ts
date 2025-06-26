@@ -2,13 +2,17 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import { MoodApi } from './services/MoodApi'
+import { AuthApi } from './services/AuthApi'
 
 export const store = configureStore({
   reducer: {
-    [MoodApi.reducerPath]: MoodApi.reducer, // RTK Query API
+    [MoodApi.reducerPath]: MoodApi.reducer,
+    [AuthApi.reducerPath]: AuthApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(MoodApi.middleware),
+    getDefaultMiddleware()
+      .concat(MoodApi.middleware)
+      .concat(AuthApi.middleware),
 })
 
 // Enable refetchOnFocus/refetchOnReconnect behaviors

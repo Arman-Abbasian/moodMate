@@ -6,8 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import RHFInput from '@/ui/RHFInput'
 import ActionButton from '@/ui/ActionButton'
 import { storage } from '@/utils/storage'
-import { useLoginMutation } from '@/services/authApi'
+import { useLoginMutation } from '@/services/AuthApi'
+import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
+import { useAuth } from '@/context/AuthContext'
 
+//form schema
 export const loginSchema = z.object({
   email: z
     .string({ required_error: 'Email is required' })
@@ -22,7 +25,9 @@ export const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export default function Login() {
+  //hooks
   const router = useRouter()
+  const { setIsAuthenticated } = useAuth()
 
   const {
     control,
@@ -32,18 +37,20 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   })
 
+  useCheckTokenExpiration()
+
   //RTK
   const [Login, { isLoading: LoginLoading }] = useLoginMutation()
 
+  //functions
   const onSubmit = async (data: LoginFormData) => {
     try {
       const res = await Login(data)
-      console.log(res)
       if (res?.data?.isSuccess) {
         const { accessToken, refreshToken } = res.data.data
         await storage.setItem('accessToken', accessToken)
         await storage.setItem('refreshToken', refreshToken)
-
+        setIsAuthenticated(true)
         router.navigate('/')
       } else {
         console.log('Login failed:', res.error)
@@ -54,8 +61,8 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 justify-center items-center bg-primary px-6 gap-4">
-      <Text className="text-white text-center font-bold text-2xl">login</Text>
+    <View className="px-6 gap-4 flex-1 justify-center items-center">
+      <Text className="text-primary text-center font-bold text-2xl">login</Text>
       {/* Email */}
       <RHFInput
         control={control}
@@ -81,7 +88,10 @@ export default function Login() {
         loading={LoginLoading}
       />
 
-      <Text onPress={() => router.push('/auth/signup' as never)}>
+      <Text
+        className="text-primary"
+        onPress={() => router.push('/auth/signup' as never)}
+      >
         don't have an account? sign up
       </Text>
     </View>

@@ -5,8 +5,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 
 export default function ProtectedLayout() {
+  //hooks
   const { isAuthenticated } = useAuth()
-  console.log(isAuthenticated)
+
   if (!isAuthenticated) {
     return <Redirect href="/auth/login" />
   }
@@ -15,7 +16,7 @@ export default function ProtectedLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: '#FF9494',
         tabBarInactiveTintColor: 'gray',
       }}
     >

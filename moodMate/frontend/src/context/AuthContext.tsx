@@ -35,7 +35,6 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
       setIsAuthenticated(!!token)
     }
-
     checkAuth()
   }, [])
 

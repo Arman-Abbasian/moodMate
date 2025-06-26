@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react'
 import MoodChart from '../components/MoodChart'
 import { Mood } from '@/types/glabalTypes'
 import ScreenWrapper from '@/ui/ScreenWrapper'
+import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
 
+//types
 export type AllMoodsQueryData = {
   id: string
   date: string
@@ -22,13 +24,20 @@ export default function Statistic() {
     useGetَAllMoodsQuery({})
   const [LazyGetَMood, { data: moodData, isLoading: LazyGetَMoodLoading }] =
     useLazyGetَMoodQuery()
-  const dotClickHandler = (id: string) => {
-    setMoodId(id)
-  }
-  console.log(moodData?.data)
+
+  //hooks
+  useCheckTokenExpiration()
+
+  //useEffects
   useEffect(() => {
     if (moodId) LazyGetَMood(moodId)
   }, [moodId])
+
+  //functions
+  const dotClickHandler = (id: string) => {
+    setMoodId(id)
+  }
+
   return (
     <ScreenWrapper>
       <AllMoodsChart

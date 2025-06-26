@@ -18,7 +18,7 @@ const ActionButton = ({
 
   return (
     <TouchableOpacity
-      className={`bg-secondary rounded-xl py-3 w-full mb-3 items-center ${
+      className={`bg-primary rounded-xl py-3 w-full mb-3 items-center ${
         isDisabled && 'opacity-50'
       }
         ${className}`}
