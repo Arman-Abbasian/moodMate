@@ -69,7 +69,7 @@ export default function Index() {
           multiline
           numberOfLines={5}
           textAlignVertical="top"
-          editable={AddMoodLoading}
+          editable={!AddMoodLoading}
         />
         {/* Submit */}
         <ActionButton

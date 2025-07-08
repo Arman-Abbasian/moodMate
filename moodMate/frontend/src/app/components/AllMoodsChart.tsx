@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { AllMoodsQueryData } from '../statistic'
+import { colors } from '@/constants/color'
 
 type Props = {
   chartData: AllMoodsQueryData[]
@@ -50,7 +51,7 @@ const CustomTick = (props: any) => {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={5} dy={16} textAnchor="middle" fontSize={10}>
+      <text x={0} y={5} dy={16} textAnchor="middle" fontSize={12}>
         <tspan x="0" dy="0">
           {day}
         </tspan>
@@ -74,7 +75,10 @@ export default function AllMoodsChart(props: Props) {
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
             <XAxis dataKey="date" tick={<CustomTick />} interval={0} />
-            <YAxis domain={[0, 110]} />
+            <YAxis
+              domain={[0, 110]}
+              tick={{ fontSize: 12, fill: colors.text }}
+            />
             <Tooltip
               formatter={(value: any, name: any, props: any) => {
                 return [`${value}`, props.payload.mood]
@@ -83,7 +87,7 @@ export default function AllMoodsChart(props: Props) {
             <Line
               type="monotone"
               dataKey="score"
-              stroke="#8884d8"
+              stroke={colors.primary}
               strokeWidth={2}
               dot={<CustomizedDot onClick={onDotClickHandler} />}
             />

@@ -33,7 +33,7 @@ const RHFInput = <T extends FieldValues>({
             onBlur={onBlur}
             autoCapitalize="none"
             placeholderTextColor="#FF9494"
-            className="w-full rounded-xl px-3 py-4 mb-1 bg-white text-rose-500 hover:text-rose-500 focus:text-rose-500 hover:outline-rose-500 focus:outline-rose-500 "
+            className="w-full rounded-xl px-3 py-4 mb-1 bg-white text-primary hover:text-primary focus:text-primary hover:outline-primary focus:outline-primary "
             {...rest}
           />
         )}
