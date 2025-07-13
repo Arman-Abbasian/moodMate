@@ -2,6 +2,7 @@ import { isTokenExpired } from '@/utils/checkTokenExpiration'
 import { storage } from '@/utils/storage'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
+import { registerSetAuthFn } from '@/utils/authManager'
 
 type AuthContextType = {
   isAuthenticated: boolean | null
@@ -36,6 +37,10 @@ export const AuthProvider = (props: AuthProviderProps) => {
       setIsAuthenticated(!!token)
     }
     checkAuth()
+  }, [])
+
+  useEffect(() => {
+    registerSetAuthFn(setIsAuthenticated)
   }, [])
 
   return (

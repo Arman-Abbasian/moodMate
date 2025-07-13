@@ -1,3 +1,4 @@
+import { colors } from '@/constants/color'
 import React, { useRef, useState } from 'react'
 import { View, Button } from 'react-native'
 
@@ -23,7 +24,11 @@ const MusicPlayerWeb: React.FC<Props> = ({ uri }) => {
   return (
     <View>
       <audio ref={audioRef} src={uri} controls style={{ display: 'none' }} />
-      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={togglePlay} />
+      <Button
+        color={colors.primary}
+        title={isPlaying ? 'Pause' : 'Play'}
+        onPress={togglePlay}
+      />
     </View>
   )
 }

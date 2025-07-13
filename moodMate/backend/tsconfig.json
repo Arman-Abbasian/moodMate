@@ -8,6 +8,6 @@
     "strict": true,
     "typeRoots": ["./src/types", "./node_modules/@types"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../frontend/src/utils/handleMutations.ts"],
   "exclude": ["node_modules", "dist"]
 }

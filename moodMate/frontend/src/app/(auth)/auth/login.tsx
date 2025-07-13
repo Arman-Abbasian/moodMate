@@ -9,6 +9,8 @@ import { storage } from '@/utils/storage'
 import { useLoginMutation } from '@/services/AuthApi'
 import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
 import { useAuth } from '@/context/AuthContext'
+import Toast from 'react-native-toast-message'
+import { handleMutation } from '@/utils/handleMutations'
 
 //form schema
 export const loginSchema = z.object({
@@ -43,21 +45,18 @@ export default function Login() {
   const [Login, { isLoading: LoginLoading }] = useLoginMutation()
 
   //functions
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      const res = await Login(data)
-      if (res?.data?.isSuccess) {
-        const { accessToken, refreshToken } = res.data.data
+  const onSubmit = (data: LoginFormData) => {
+    handleMutation({
+      mutationFn: () => Login(data).unwrap(),
+      successMessage: 'Logged in successfully',
+      onSuccess: async (res) => {
+        const { accessToken, refreshToken } = res.data
         await storage.setItem('accessToken', accessToken)
         await storage.setItem('refreshToken', refreshToken)
         setIsAuthenticated(true)
         router.navigate('/')
-      } else {
-        console.log('Login failed:', res.error)
-      }
-    } catch (err) {
-      console.log('Login failed:', err)
-    }
+      },
+    })
   }
 
   return (

@@ -3,6 +3,7 @@ import { Redirect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 
 import { Tabs } from 'expo-router'
+import { colors } from '@/constants/color'
 
 export default function ProtectedLayout() {
   //hooks
@@ -16,8 +17,8 @@ export default function ProtectedLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FF9494',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.secondary,
       }}
     >
       <Tabs.Screen

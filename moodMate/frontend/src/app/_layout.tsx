@@ -3,7 +3,8 @@ import '@/globals.css'
 import { Provider } from 'react-redux'
 import { store } from '@/store'
 import { AuthProvider } from '@/context/AuthContext'
-import { View } from 'react-native'
+import { useColorScheme, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 
 export default function RootLayout() {
   return (
@@ -11,6 +12,7 @@ export default function RootLayout() {
       <Provider store={store}>
         <View className="flex-1 bg-background">
           <Stack screenOptions={{ headerShown: false }} />
+          <Toast />
         </View>
       </Provider>
     </AuthProvider>

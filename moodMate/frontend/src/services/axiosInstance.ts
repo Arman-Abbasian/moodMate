@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { storage } from '@/utils/storage'
 import { router } from 'expo-router'
+import { setAuthState } from '@/utils/authManager'
 
 const API_BASE_URL = 'http://localhost:5000/api/'
 
@@ -53,6 +54,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         await storage.deleteItem('accessToken')
         await storage.deleteItem('refreshToken')
+        setAuthState(false)
         router.replace('/auth/login')
       }
     }

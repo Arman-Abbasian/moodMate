@@ -1,0 +1,37 @@
+// utils/handleMutation.ts
+
+import Toast from 'react-native-toast-message'
+
+type HandleMutationParams<T = any> = {
+  mutationFn: () => Promise<T> // فانکشنی که خودش unwrap() شده mutation رو اجرا می‌کنه
+  onSuccess?: (res: T) => void // اگر موفق بود، چه کن
+  successMessage?: string // پیام موفقیت برای Toast
+  defaultErrorMessage?: string // پیام پیش‌فرض خطا
+}
+
+export const handleMutation = async <T = any>({
+  mutationFn,
+  onSuccess,
+  successMessage = 'Done successfully',
+  defaultErrorMessage = 'Something went wrong',
+}: HandleMutationParams<T>) => {
+  try {
+    const result = await mutationFn() // unwrap promise
+    if (successMessage) {
+      Toast.show({
+        type: 'success',
+        text1: successMessage,
+      })
+    }
+    if (onSuccess) {
+      onSuccess(result)
+    }
+  } catch (err: any) {
+    const message = err?.data?.message || defaultErrorMessage
+    console.log(err)
+    Toast.show({
+      type: 'error',
+      text1: message,
+    })
+  }
+}

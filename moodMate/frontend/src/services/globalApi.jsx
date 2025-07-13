@@ -1,6 +1,8 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query'
 import { storage } from '@/utils/storage'
 import axios from 'axios'
+import { useRouter } from 'expo-router'
+import { setAuthState } from '@/utils/authManager'
 
 const baseUrl = 'http://localhost:5000/api/'
 
@@ -17,6 +19,7 @@ const rawBaseQuery = fetchBaseQuery({
 })
 
 export const baseQueryWithReauth = async (args, api, extraOptions) => {
+  const router = useRouter()
   let result = await rawBaseQuery(args, api, extraOptions)
 
   if (result.error?.status === 401) {
@@ -37,7 +40,7 @@ export const baseQueryWithReauth = async (args, api, extraOptions) => {
         const newAccessToken = res.data?.accessToken
         const newRefreshToken = res.data?.refreshToken
 
-        if (newAccessToken) {
+        if (newAccessToken && newRefreshToken) {
           // ✅ ذخیره توکن‌های جدید
           await storage.setItem('accessToken', newAccessToken)
           await storage.setItem('refreshToken', newRefreshToken)
@@ -48,11 +51,14 @@ export const baseQueryWithReauth = async (args, api, extraOptions) => {
       } catch (err) {
         await storage.deleteItem('accessToken')
         await storage.deleteItem('refreshToken')
-        // اگر نیاز داری: dispatch logout, redirect, etc.
+        setAuthState(false)
+        router.replace('/auth/login')
       }
     } else {
       await storage.deleteItem('accessToken')
       await storage.deleteItem('refreshToken')
+      setAuthState(false)
+      router.replace('/auth/login')
     }
   }
 
