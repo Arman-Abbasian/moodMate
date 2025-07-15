@@ -27,8 +27,21 @@ export const handleMutation = async <T = any>({
       onSuccess(result)
     }
   } catch (err: any) {
-    const message = err?.data?.message || defaultErrorMessage
-    console.log(err)
+    console.log('Full error object:', JSON.stringify(err, null, 2))
+    console.log('Error status:', err?.status)
+    console.log('Error data:', err?.data)
+    console.log('Error message:', err?.message)
+
+    // چک کردن ساختارهای مختلف ارور
+    let message = defaultErrorMessage
+
+    if (err?.data?.message) {
+      message = err.data.message
+    } else if (err?.message) {
+      message = err.message
+    } else if (err?.status) {
+      message = `Error ${err.status}: ${err.statusText || 'Unknown error'}`
+    }
     Toast.show({
       type: 'error',
       text1: message,

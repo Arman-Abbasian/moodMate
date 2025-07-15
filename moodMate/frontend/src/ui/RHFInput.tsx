@@ -13,12 +13,14 @@ interface RHFInputProps<T extends FieldValues>
   control: Control<T>
   name: Path<T>
   errors: FieldErrors<T>
+  className?: string
 }
 
 const RHFInput = <T extends FieldValues>({
   control,
   name,
   errors,
+  className,
   ...rest
 }: RHFInputProps<T>) => {
   return (
@@ -33,7 +35,7 @@ const RHFInput = <T extends FieldValues>({
             onBlur={onBlur}
             autoCapitalize="none"
             placeholderTextColor="#FF9494"
-            className="w-full rounded-xl px-3 py-4 mb-1 bg-white text-primary hover:text-primary focus:text-primary hover:outline-primary focus:outline-primary "
+            className={`w-full rounded-xl px-3 py-4 mb-1 bg-white text-primary hover:text-primary focus:text-primary hover:outline-primary focus:outline-primary ${className}`}
             {...rest}
           />
         )}

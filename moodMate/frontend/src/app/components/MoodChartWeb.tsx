@@ -13,7 +13,7 @@ type Props = {
   data: Mood[]
 }
 
-export default function MoodChart({ data }: Props) {
+export default function MoodChartWeb({ data }: Props) {
   return (
     <div className="w-full h-52">
       <ResponsiveContainer width="100%" height="100%">

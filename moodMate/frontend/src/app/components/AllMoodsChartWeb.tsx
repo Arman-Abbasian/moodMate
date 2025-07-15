@@ -6,8 +6,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { AllMoodsQueryData } from '../statistic'
 import { colors } from '@/constants/color'
+import { AllMoodsQueryData } from '../(protected)/statistic'
 
 type Props = {
   chartData: AllMoodsQueryData[]
@@ -66,7 +66,7 @@ const CustomTick = (props: any) => {
   )
 }
 
-export default function AllMoodsChart(props: Props) {
+export default function AllMoodsChartWeb(props: Props) {
   const { chartData, onDotClickHandler } = props
 
   return (

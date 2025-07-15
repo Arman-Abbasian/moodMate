@@ -1,11 +1,13 @@
 import { useGetَAllMoodsQuery, useLazyGetَMoodQuery } from '@/services/MoodApi'
 import { View } from 'react-native'
-import AllMoodsChart from '../components/AllMoodsChart'
+import AllMoodsChartWeb from '../components/AllMoodsChartWeb'
 import { useEffect, useState } from 'react'
-import MoodChart from '../components/MoodChart'
+import MoodChart from '../components/MoodChartWeb'
 import { Mood } from '@/types/glabalTypes'
 import ScreenWrapper from '@/ui/ScreenWrapper'
 import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
+import AllMoodsChartMobile from '../components/AllMoodChartMobile'
+import MoodChartMobile from '../components/MoodChartMobile'
 
 //types
 export type AllMoodsQueryData = {
@@ -40,13 +42,13 @@ export default function Statistic() {
 
   return (
     <ScreenWrapper>
-      <AllMoodsChart
+      <AllMoodsChartMobile
         chartData={(AllMoodsQuery?.data as AllMoodsQueryData[]) || []}
         onDotClickHandler={dotClickHandler}
       />
       {moodId && moodData?.data && (
         <View className="mt-16">
-          <MoodChart data={moodData?.data?.moods as Mood[]} />
+          <MoodChartMobile data={moodData?.data?.moods as Mood[]} />
         </View>
       )}
     </ScreenWrapper>

@@ -4,7 +4,9 @@ import axios from 'axios'
 import { useRouter } from 'expo-router'
 import { setAuthState } from '@/utils/authManager'
 
-const baseUrl = 'http://localhost:5000/api/'
+const baseUrl = __DEV__
+  ? 'http://192.168.85.98:5000/api/'
+  : 'https://your-production-api.com/api/'
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { View, Button } from 'react-native'
+import { View, Button, Pressable, Text } from 'react-native'
 import { Audio } from 'expo-av'
+import { colors } from '@/constants/color'
 
 type Props = {
   uri: string
@@ -38,7 +39,14 @@ const MusicPlayerNative: React.FC<Props> = ({ uri }) => {
 
   return (
     <View>
-      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={togglePlay} />
+      <Pressable
+        className="bg-primary px-4 py-3 rounded-md"
+        onPress={togglePlay}
+      >
+        <Text className="text-white text-center">
+          {isPlaying ? 'Pause' : 'Play'}
+        </Text>{' '}
+      </Pressable>
     </View>
   )
 }

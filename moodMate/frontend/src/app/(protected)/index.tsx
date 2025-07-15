@@ -6,12 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
 import { useAddMoodMutation } from '@/services/MoodApi'
 import { useState } from 'react'
-import MoodChart from '../components/MoodChart'
+import MoodChart from '../components/MoodChartWeb'
 import { getAbsoluteUrl } from '@/utils/getAbsoluteUrl'
 import MusicPlayerWeb from '../components/MusicPlayerWeb'
 import MusicPlayerNative from '../components/MusicPlayerNative'
 import ScreenWrapper from '@/ui/ScreenWrapper'
 import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
+import MoodChartMobile from '../components/MoodChartMobile'
 
 //form schema
 export const moodSchema = z.object({
@@ -67,9 +68,9 @@ export default function Index() {
           errors={errors}
           keyboardType="default"
           multiline
-          numberOfLines={5}
           textAlignVertical="top"
           editable={!AddMoodLoading}
+          className="h-44"
         />
         {/* Submit */}
         <ActionButton
@@ -82,7 +83,7 @@ export default function Index() {
         <View className="flex gap-5 mt-10">
           <Text className="text-2xl">Main Feel: {data.topMood.label}</Text>
           <View>
-            <MoodChart data={data.moods} />
+            <MoodChartMobile data={data.moods} />
           </View>
           <Text>{data.resources.quote}</Text>
           <Image
