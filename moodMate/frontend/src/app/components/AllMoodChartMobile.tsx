@@ -25,47 +25,62 @@ export default function AllMoodsChartMobile({
   chartData,
   onDotClickHandler,
 }: Props) {
-  // پاک‌سازی و دیباگ دیتا
-  console.log('Original chartData:', chartData)
-
   const safeChartData = chartData.filter(
     (item) => typeof item.score === 'number' && isFinite(item.score)
   )
 
-  console.log('Safe chartData:', safeChartData)
-
   if (safeChartData.length === 0) {
     return (
       <View style={{ padding: 20, alignItems: 'center' }}>
-        <Text>هیچ داده معتبری برای نمایش وجود ندارد</Text>
+        <Text style={{ color: colors.text }}>
+          هیچ داده معتبری برای نمایش وجود ندارد
+        </Text>
       </View>
     )
   }
 
-  // تبدیل labels به فرمت امن
+  // تبدیل تاریخ به فرمت چند خطی (روز، ماه، سال)
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) {
+        return dateString
+      }
+
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+
+      // استفاده از کاراکتر جدید خط برای نمایش ستونی
+      return `${day}
+${month}
+${year}`
+    } catch (error) {
+      console.error('Error formatting date:', dateString, error)
+      return dateString
+    }
+  }
+
   const safeLabels = safeChartData.map((item, index) => {
     try {
       if (!item.date) return `${index + 1}`
 
-      // تبدیل به string و پاک کردن کاراکترهای مشکل‌ساز
-      const dateString = String(item.date)
-        .replace(/[^\w\s\-\/]/g, '') // فقط حروف، اعداد، فاصله، خط تیره، اسلش
-        .trim()
-
-      // اگر خیلی طولانی بود، کوتاهش کن
-      if (dateString.length > 10) {
-        const parts = dateString.split(' ')
-        return parts[0] || `${index + 1}`
+      const date = new Date(item.date)
+      if (isNaN(date.getTime())) {
+        return `${index + 1}`
       }
 
-      return dateString || `${index + 1}`
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+
+      // برگرداندن آرایه‌ای از خطوط برای نمایش ستونی
+      return [day, month, year].join('\n')
     } catch (error) {
       console.error('Error processing date:', item.date, error)
       return `${index + 1}`
     }
   })
-
-  console.log('Safe labels:', safeLabels)
 
   const data = {
     labels: safeLabels,
@@ -74,6 +89,7 @@ export default function AllMoodsChartMobile({
         data: safeChartData.map((item) => Number(item.score)),
         color: () => colors.primary,
         strokeWidth: 2,
+        withDots: true, // برگرداندن نقطه‌ها
       },
     ],
   }
@@ -81,60 +97,109 @@ export default function AllMoodsChartMobile({
   const chartWidth = Math.max(screenWidth - 40, safeChartData.length * 60)
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={{ paddingVertical: 10 }}>
-        <LineChart
-          data={data}
-          width={chartWidth}
-          height={300}
-          fromZero
-          withInnerLines={false}
-          withOuterLines={false}
-          withDots
-          bezier
-          chartConfig={{
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => colors.primary,
-            labelColor: () => colors.text,
-            propsForDots: {
-              r: '6',
-              strokeWidth: '2',
-              stroke: '#fff',
-            },
-            decimalPlaces: 0, // حذف اعشار
-          }}
-          onDataPointClick={({ index }) => {
-            try {
-              const item = safeChartData[index]
-              if (item?.id) {
-                onDotClickHandler(item.id)
+    <View
+      style={{
+        backgroundColor: '#1a1a1a',
+        borderRadius: 12,
+        marginHorizontal: 20,
+        overflow: 'hidden',
+      }}
+    >
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ borderRadius: 12 }}
+      >
+        <View style={{ position: 'relative', backgroundColor: '#1a1a1a' }}>
+          <LineChart
+            data={data}
+            width={chartWidth}
+            height={240}
+            yAxisInterval={1}
+            chartConfig={{
+              backgroundColor: '#1a1a1a',
+              backgroundGradientFrom: '#1a1a1a',
+              backgroundGradientTo: '#1a1a1a',
+              color: () => colors.primary,
+              labelColor: () => colors.primary,
+              propsForDots: {
+                r: '6',
+                strokeWidth: '2',
+                stroke: '#fff',
+              },
+              decimalPlaces: 0,
+              propsForBackgroundLines: {
+                strokeWidth: 0,
+              },
+              fillShadowGradient: 'transparent',
+              fillShadowGradientOpacity: 0,
+              propsForLabels: {
+                fontSize: 10,
+                textAnchor: 'middle',
+              },
+              propsForHorizontalLabels: {
+                fill: colors.primary,
+              },
+              propsForVerticalLabels: {
+                fill: colors.primary,
+              },
+            }}
+            style={{
+              marginVertical: 8,
+              marginLeft: 10,
+              borderRadius: 0,
+            }}
+            withShadow={false}
+            withInnerLines={false}
+            withOuterLines={false}
+            withVerticalLines={false}
+            withHorizontalLines={false}
+            onDataPointClick={({ index }) => {
+              try {
+                const item = safeChartData[index]
+                if (item?.id) {
+                  onDotClickHandler(item.id)
+                }
+              } catch (error) {
+                console.error('Error in onDataPointClick:', error)
               }
-            } catch (error) {
-              console.error('Error in onDataPointClick:', error)
-            }
-          }}
-          decorator={() => {
-            return safeChartData.map((item, index) => {
-              const emoji = moodEmojis[item.mood] || '❓'
-              const left = (chartWidth / safeChartData.length) * index
+            }}
+          />
 
-              return (
-                <View
-                  key={item.id || index}
-                  style={{
-                    position: 'absolute',
-                    left: left - 8,
-                    top: 10,
-                  }}
-                >
-                  <Text style={{ fontSize: 16 }}>{emoji}</Text>
-                </View>
-              )
-            })
-          }}
-        />
-      </View>
-    </ScrollView>
+          {/* استیکرها بالای نقطه‌های نمودار */}
+          {safeChartData.map((item, index) => {
+            const emoji = moodEmojis[item.mood] || '❓'
+            const leftPosition =
+              70 +
+              (chartWidth - 130) *
+                (index / Math.max(safeChartData.length - 1, 1))
+
+            // محاسبه موقعیت Y بر اساس مقدار score
+            const maxScore = Math.max(...safeChartData.map((d) => d.score))
+            const minScore = Math.min(...safeChartData.map((d) => d.score))
+            const scoreRange = maxScore - minScore || 1
+            const normalizedScore = (item.score - minScore) / scoreRange
+            const topPosition = 180 - normalizedScore * 100 - 25 // 25 پیکسل بالاتر از نقطه
+
+            return (
+              <View
+                key={`${item.id}-${index}`}
+                style={{
+                  position: 'absolute',
+                  left: leftPosition - 12,
+                  top: topPosition - 12,
+                  width: 24,
+                  height: 24,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ fontSize: 18 }}>{emoji}</Text>
+              </View>
+            )
+          })}
+        </View>
+      </ScrollView>
+    </View>
   )
 }
