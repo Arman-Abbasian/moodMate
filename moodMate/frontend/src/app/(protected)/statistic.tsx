@@ -24,7 +24,7 @@ export default function Statistic() {
   //RTK
   const { data: AllMoodsQuery, isLoading: AllMoodsQueryLoading } =
     useGetَAllMoodsQuery({})
-  const [LazyGetَMood, { data: moodData, isLoading: LazyGetَMoodLoading }] =
+  const [LazyGetَMood, { data: moodData, isFetching: LazyGetَMoodLoading }] =
     useLazyGetَMoodQuery()
 
   //hooks
@@ -48,7 +48,10 @@ export default function Statistic() {
       />
       {moodId && moodData?.data && (
         <View className="mt-16">
-          <MoodChartMobile data={moodData?.data?.moods as Mood[]} />
+          <MoodChartMobile
+            data={moodData?.data?.moods as Mood[]}
+            loading={LazyGetَMoodLoading}
+          />
         </View>
       )}
     </ScreenWrapper>

@@ -2,11 +2,14 @@
 
 import Toast from 'react-native-toast-message'
 
+type ToastPosition = 'top' | 'bottom'
+
 type HandleMutationParams<T = any> = {
   mutationFn: () => Promise<T> // فانکشنی که خودش unwrap() شده mutation رو اجرا می‌کنه
   onSuccess?: (res: T) => void // اگر موفق بود، چه کن
   successMessage?: string // پیام موفقیت برای Toast
   defaultErrorMessage?: string // پیام پیش‌فرض خطا
+  toastPosition?: ToastPosition
 }
 
 export const handleMutation = async <T = any>({
@@ -14,6 +17,7 @@ export const handleMutation = async <T = any>({
   onSuccess,
   successMessage = 'Done successfully',
   defaultErrorMessage = 'Something went wrong',
+  toastPosition = 'top',
 }: HandleMutationParams<T>) => {
   try {
     const result = await mutationFn() // unwrap promise
@@ -21,6 +25,7 @@ export const handleMutation = async <T = any>({
       Toast.show({
         type: 'success',
         text1: successMessage,
+        position: toastPosition,
       })
     }
     if (onSuccess) {
@@ -45,6 +50,7 @@ export const handleMutation = async <T = any>({
     Toast.show({
       type: 'error',
       text1: message,
+      position: toastPosition,
     })
   }
 }

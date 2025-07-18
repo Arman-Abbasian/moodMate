@@ -56,6 +56,7 @@ export default function Login() {
         setIsAuthenticated(true)
         router.navigate('/')
       },
+      toastPosition: 'bottom',
     })
   }
 
