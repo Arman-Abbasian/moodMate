@@ -22,6 +22,7 @@ const ScreenWrapper = ({
       <ScrollView
         className="mt-4 w-full flex-1"
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         {...scrollProps}
       >
         {children}

@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import ActionButton from '@/ui/ActionButton'
 import { useAddMoodMutation } from '@/services/MoodApi'
 import { useState } from 'react'
-import MoodChart from '../components/MoodChartWeb'
 import { getAbsoluteUrl } from '@/utils/getAbsoluteUrl'
 import MusicPlayerWeb from '../components/MusicPlayerWeb'
 import MusicPlayerNative from '../components/MusicPlayerNative'
@@ -83,7 +82,7 @@ export default function Index() {
         <View className="flex gap-5 mt-10">
           <Text className="text-2xl">Main Feel: {data.topMood.label}</Text>
           <View>
-            <MoodChartMobile data={data.moods} />
+            <MoodChartMobile data={data.moods} loading={AddMoodLoading} />
           </View>
           <Text>{data.resources.quote}</Text>
           <Image
