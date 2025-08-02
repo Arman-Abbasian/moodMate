@@ -1,13 +1,14 @@
 import { useGetَAllMoodsQuery, useLazyGetَMoodQuery } from '@/services/MoodApi'
 import { View } from 'react-native'
 import AllMoodsChartWeb from '../components/AllMoodsChartWeb'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import MoodChart from '../components/MoodChartWeb'
 import { Mood } from '@/types/glabalTypes'
 import ScreenWrapper from '@/ui/ScreenWrapper'
 import useCheckTokenExpiration from '@/hooks/useCheckTokenExpiration'
 import AllMoodsChartMobile from '../components/AllMoodChartMobile'
 import MoodChartMobile from '../components/MoodChartMobile'
+import { useFocusEffect } from 'expo-router'
 
 //types
 export type AllMoodsQueryData = {
@@ -22,11 +23,19 @@ export default function Statistic() {
   //states
   const [moodId, setMoodId] = useState<null | string>(null)
   //RTK
-  const { data: AllMoodsQuery, isLoading: AllMoodsQueryLoading } =
-    useGetَAllMoodsQuery({})
+  const {
+    data: AllMoodsQuery,
+    isLoading: AllMoodsQueryLoading,
+    refetch: AllMoodsQueryRefetch,
+  } = useGetَAllMoodsQuery({})
   const [LazyGetَMood, { data: moodData, isFetching: LazyGetَMoodLoading }] =
     useLazyGetَMoodQuery()
 
+  useFocusEffect(
+    useCallback(() => {
+      AllMoodsQueryRefetch()
+    }, [AllMoodsQueryRefetch])
+  )
   //hooks
   useCheckTokenExpiration()
 
@@ -45,6 +54,7 @@ export default function Statistic() {
       <AllMoodsChartMobile
         chartData={(AllMoodsQuery?.data as AllMoodsQueryData[]) || []}
         onDotClickHandler={dotClickHandler}
+        loading={AllMoodsQueryLoading}
       />
       {moodId && moodData?.data && (
         <View className="mt-16">

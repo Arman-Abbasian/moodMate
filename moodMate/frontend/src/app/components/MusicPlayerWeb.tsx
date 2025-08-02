@@ -1,6 +1,6 @@
 import { colors } from '@/constants/color'
 import React, { useRef, useState } from 'react'
-import { View, Button } from 'react-native'
+import { View, Pressable } from 'react-native'
 
 type Props = {
   uri: string
@@ -24,11 +24,14 @@ const MusicPlayerWeb: React.FC<Props> = ({ uri }) => {
   return (
     <View>
       <audio ref={audioRef} src={uri} controls style={{ display: 'none' }} />
-      <Button
-        color={colors.primary}
-        title={isPlaying ? 'Pause' : 'Play'}
+      <Pressable
+        className={`${colors.primary} w-full h-10 rounded-md flex items-center justify-center`}
         onPress={togglePlay}
-      />
+      >
+        <span style={{ color: 'white', fontWeight: 'bold' }}>
+          {isPlaying ? 'Pause' : 'Play'}
+        </span>
+      </Pressable>
     </View>
   )
 }
